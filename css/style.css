@@ -1083,7 +1083,7 @@ html.anim-static .ch__i, html.anim-static .wd__i, html.anim-static .sl__i { tran
 }
 
 /* --- 25-8. 리빌 강화: 더 크게 떠오르고 초점이 잡히듯 또렷해짐 --- */
-html.anim-ready [data-reveal] { transform: translateY(40px); filter: blur(6px); }
+html.anim-ready [data-reveal] { transform: translateY(24px); }
 [data-reveal].is-in { filter: none !important; transform: none !important; }
 html.anim-ready [data-anim="fade-up"] { transform: translateY(40px); }
 

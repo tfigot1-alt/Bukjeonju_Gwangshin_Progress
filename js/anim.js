@@ -562,8 +562,8 @@
         var tt = 1 - clamp((p - 0.05) / 0.32, 0, 1);
         if (title) {
           title.style.opacity = tt.toFixed(3);
-          title.style.transform = 'translateY(' + ((1 - tt) * -48).toFixed(1) + 'px) scale(' + (1 + (1 - tt) * .06).toFixed(3) + ')';
-          title.style.filter = mobile ? 'none' : 'blur(' + ((1 - tt) * 8).toFixed(1) + 'px)';
+          title.style.transform = 'translateY(' + ((1 - tt) * -32).toFixed(1) + 'px) scale(' + (1 + (1 - tt) * .025).toFixed(3) + ')';
+          title.style.filter = 'none';
         }
         if (badge) badge.style.opacity = tt.toFixed(3);
 
@@ -572,8 +572,8 @@
         var gout = 1;
         if (tag) {
           tag.style.opacity = (gin * gout).toFixed(3);
-          tag.style.transform = 'translateY(calc(-50% + ' + ((1 - gin) * 22).toFixed(1) + 'px))';
-          tag.style.filter = mobile ? 'none' : 'blur(' + ((1 - gin) * 8).toFixed(1) + 'px)';
+          tag.style.transform = 'translateY(calc(-50% + ' + ((1 - gin) * 14).toFixed(1) + 'px))';
+          tag.style.filter = 'none';
         }
 
         // 단지 지표: 마지막 구간에서 떠오름
@@ -607,12 +607,12 @@
   function fadeIn() {
     $$('[data-reveal]').forEach(function (el) {
       var delay = (parseInt(el.getAttribute('data-delay'), 10) || 0) * 0.09;
-      gsap.set(el, { opacity: 0, y: 42, filter: 'blur(6px)' });
+      gsap.set(el, { opacity: 0, y: 24 });
       onReveal(el, function () {
         gsap.to(el, {
-          opacity: 1, y: 0, filter: 'blur(0px)',
+          opacity: 1, y: 0,
           duration: 1.05, delay: delay, ease: 'power3.out', overwrite: 'auto',
-          onComplete: function () { el.classList.add('is-in'); el.style.filter = ''; }
+          onComplete: function () { el.classList.add('is-in'); }
         });
       }, 0.92);
     });
