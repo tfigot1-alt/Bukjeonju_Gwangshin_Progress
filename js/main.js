@@ -204,102 +204,21 @@
   });
 
   /* ------------------------------------------------------------------
-     8) 방문예약 · 관심고객 폼
-        · 전화번호 자동 하이픈 / 유효성 검사
-        · data-endpoint(Google Apps Script 웹앱 URL)로 fetch 전송
-          → 구글 시트에 자동 저장(+ 설정 시 담당자 알림)
-        · endpoint 가 비어 있으면 입력 검증만 하고 안내 문구 표시
-          (설정 방법: api/폼연동-안내.md)
-        · API 키 등 민감정보는 이 파일/HTML 어디에도 두지 않습니다.
-          data-endpoint 에 들어가는 건 "웹앱 실행 주소"뿐이며, 실제 저장·알림
-          로직과 그 안의 비밀값(문자 API 키 등)은 전부 Apps Script(서버 측,
-          PropertiesService)에 있습니다 — 브라우저로는 절대 전달되지 않습니다.
+     8) 방문예약 · 관심고객 접수는 구글폼 임베드(iframe)로 대체되어
+        이 파일에서 별도로 처리할 내용이 없습니다. (index.html #visit-form 참고)
      ------------------------------------------------------------------ */
-  var form = $('#leadForm');
-  var msg  = $('#formMsg');
-  var submitBtn = $('#leadSubmit');
-
-  function say(text, ok) {
-    if (!msg) return;
-    msg.hidden = false;
-    msg.textContent = text;
-    msg.style.borderColor = ok ? 'var(--brand)' : '#ff6b6b';
-    msg.style.color = ok ? 'var(--brand)' : '#ff9b9b';
-  }
-
-  var phone = $('#f-phone');
-  if (phone) {
-    phone.addEventListener('input', function () {
-      var v = phone.value.replace(/\D/g, '').slice(0, 11);
-      if (v.length < 4)       phone.value = v;
-      else if (v.length < 8)  phone.value = v.slice(0, 3) + '-' + v.slice(3);
-      else                    phone.value = v.slice(0, 3) + '-' + v.slice(3, 7) + '-' + v.slice(7);
-    });
-  }
-
-  if (form) {
-    // 현재 페이지 주소를 숨은 필드에 채움 (문의 출처 확인용)
-    var pageField = form.querySelector('[data-fill="href"]');
-    if (pageField) { try { pageField.value = location.href; } catch (e) {} }
-
-    // '방문예약'일 때만 희망 방문일시 칸 강조
-    var purpose = $('#f-purpose');
-    var visitField = form.querySelector('[data-visit-only]');
-    function syncVisit() {
-      if (!visitField) return;
-      var isVisit = purpose && purpose.value === '방문예약';
-      visitField.style.opacity = isVisit ? '1' : '.55';
-    }
-    if (purpose) { purpose.addEventListener('change', syncVisit); syncVisit(); }
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name  = $('#f-name');
-      var agree = $('#f-agree');
-      var hp    = form.querySelector('[name="_hp"]');
-
-      if (hp && hp.value) { return; } // 봇
-      if (!name.value.trim()) { say('성함을 입력해 주세요.', false); name.focus(); return; }
-      var digits = phone.value.replace(/\D/g, '');
-      if (!/^01[016789]\d{7,8}$/.test(digits)) {
-        say('휴대폰 번호를 정확히 입력해 주세요.', false); phone.focus(); return;
-      }
-      if (!agree.checked) { say('개인정보 수집·이용에 동의해 주세요.', false); agree.focus(); return; }
-
-      var endpoint = form.getAttribute('data-endpoint');
-      if (!endpoint) {
-        say('입력이 확인되었습니다. 전송 연동이 아직 설정되지 않아 접수되지 않았습니다. (담당자: api/폼연동-안내.md 참고)', true);
-        return;
-      }
-
-      // ---- 전송 ----
-      var data = new FormData(form);
-      // 체크되지 않은 체크박스는 FormData 에 아예 포함되지 않으므로,
-      // 구글 시트에 "동의/미동의" 값이 항상 명시적으로 기록되도록 덮어씁니다.
-      data.set('agree', agree.checked ? '동의' : '미동의');
-      data.set('agree_marketing', $('#f-agree2').checked ? '동의' : '미동의');
-      data.append('submitted_at', new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }));
-      if (submitBtn) { submitBtn.disabled = true; }
-      say('접수 중입니다…', true);
-
-      fetch(endpoint, { method: 'POST', body: data })
-        .then(function () {
-          // Apps Script 웹앱은 CORS 응답 헤더가 없어 본문을 읽지 못할 수 있으나
-          // 요청 자체는 전달됩니다. 정상 접수로 처리.
-          form.reset();
-          if (pageField) pageField.value = location.href;
-          syncVisit();
-          say('방문예약 신청이 완료되었습니다. 담당자 확인 후 안내드리겠습니다.', true);
-        })
-        .catch(function () {
-          say('일시적인 오류로 신청이 완료되지 않았습니다. 잠시 후 다시 시도해 주세요.', false);
-        })
-        .then(function () { if (submitBtn) submitBtn.disabled = false; });
-    });
-  }
 
   /* ------------------------------------------------------------------
      9) 앵커 스크롤 시 고정 헤더 높이만큼 보정
+        · "방문예약" 계열 버튼은 전부 href="#visit-form" 으로 통일되어 있어
+          섹션 상단의 소개 문구를 지나칠 필요 없이 구글폼(iframe) 위치로
+          바로 스크롤됩니다.
+        · behavior 는 일부러 'instant' 를 씁니다 — 히어로(.shero) 구간에
+          GSAP ScrollTrigger 의 pin(스크롤 스크럽) 애니메이션이 걸려 있어,
+          네이티브 smooth 스크롤(behavior:'smooth')과 경합하면 목적지까지
+          가지 못하고 히어로 구간 초반(스크롤 약 500~600px)에서 멈춰버리는
+          현상이 실제로 확인되었습니다(2026-09-22). 한 번에 정확히 도착하는
+          것이 우선이라 부드러운 스크롤 대신 즉시 이동을 사용합니다.
      ------------------------------------------------------------------ */
   $$('a[href^="#"]').forEach(function (a) {
     a.addEventListener('click', function (e) {
@@ -309,8 +228,10 @@
       if (!el) return;
       e.preventDefault();
       var offset = header.offsetHeight;
-      var y = el.getBoundingClientRect().top + window.scrollY - (id === '#top' ? 0 : offset - 1);
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      // +24px 여유: 도착 지점이 data-reveal 로 아래에서 살짝 떠오르며 자리잡는
+      // 요소인 경우, 측정 시점과 실제 정착 위치가 약간 달라 헤더에 가릴 수 있음.
+      var y = el.getBoundingClientRect().top + window.scrollY - (id === '#top' ? 0 : offset - 1 + 24);
+      window.scrollTo({ top: y, behavior: 'instant' });
       history.replaceState(null, '', id);
     });
   });

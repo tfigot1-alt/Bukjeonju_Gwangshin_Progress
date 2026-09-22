@@ -49,7 +49,7 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Nanum+Myeongjo:wght@400;700&display=swap">
-  <link rel="stylesheet" href="css/style.css?v=15">
+  <link rel="stylesheet" href="css/style.css?v=16">
 
 <!-- 애니메이션 초기 상태 활성화
      PC에서 index.html을 직접 열 때는 요청한 연출을 기본 실행하고,
@@ -177,7 +177,7 @@
 
     <div class="header__cta">
       <a class="header__tel" href="tel:01081144638">010-8114-4638</a>
-      <a class="btn btn--brand" href="#contact">방문예약</a>
+      <a class="btn btn--brand" href="#visit-form">방문예약</a>
       <button class="burger" id="burger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobilemenu"><span></span></button>
     </div>
   </div>
@@ -194,7 +194,7 @@
   </nav>
   <div class="mobilemenu__foot">
     <a class="btn btn--ghost" href="tel:01081144638">전화 상담 010-8114-4638</a>
-    <a class="btn btn--brand" href="#contact">관심고객 사전등록</a>
+    <a class="btn btn--brand" href="#visit-form">관심고객 사전등록</a>
   </div>
 </div>
 
@@ -885,7 +885,7 @@
       방문 예약 후 오시면 전담 상담사가 대기 없이 안내해 드립니다.
     </p>
     <div class="ctaband__actions" data-reveal data-delay="3">
-      <a class="btn btn--brand btn--lg" href="#contact">방문 예약하기 <span class="btn__arrow">→</span></a>
+      <a class="btn btn--brand btn--lg" href="#visit-form">방문 예약하기 <span class="btn__arrow">→</span></a>
       <a class="btn btn--ghost btn--lg" href="tel:01081144638">전화 상담 010-8114-4638</a>
     </div>
   </div>
@@ -924,107 +924,27 @@
         </div>
       </div>
 
-      <!-- 폼 수신 엔드포인트: data-endpoint 에 Google Apps Script 웹앱 URL 을 넣으면
-           제출 시 구글 시트에 자동 저장됩니다. (api/폼연동-안내.md 참고)
-           비어 있으면 입력 검증만 되고 전송되지 않습니다.
-           ※ API 키 등 민감정보는 이 HTML/JS 에 절대 넣지 않습니다 — 저장·알림 로직은
-           전부 Apps Script(서버 측)에서 실행되고, 여기 노출되는 건 그 웹앱의 실행 주소뿐입니다. -->
-      <form class="form" id="leadForm" data-reveal data-delay="1" novalidate
-            method="post" action="" data-endpoint="">
-        <input type="hidden" name="source" value="북전주 광신프로그레스 홈페이지">
-        <input type="hidden" name="page" value="" data-fill="href">
-        <!-- 스팸봇 차단용 (사람에게는 안 보임) -->
-        <div style="position:absolute;left:-9999px" aria-hidden="true">
-          <label>이 칸은 비워두세요 <input type="text" name="_hp" tabindex="-1" autocomplete="off"></label>
-        </div>
-
-        <div class="field--row">
-          <div class="field">
-            <label class="field__label" for="f-purpose">문의 유형 <span class="req">*</span></label>
-            <select id="f-purpose" name="purpose">
-              <option value="방문예약">분양홍보관 방문예약</option>
-              <option value="사전등록">관심고객 사전등록</option>
-              <option value="분양가문의">공급금액 · 납부조건 문의</option>
-              <option value="대출문의">중도금 대출 문의</option>
-              <option value="기타문의">기타 문의</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="field__label" for="f-name">성함 <span class="req">*</span></label>
-            <input id="f-name" name="name" type="text" required autocomplete="name" placeholder="홍길동">
-          </div>
-        </div>
-
-        <div class="field--row">
-          <div class="field">
-            <label class="field__label" for="f-phone">연락처 <span class="req">*</span></label>
-            <input id="f-phone" name="phone" type="tel" required inputmode="numeric"
-                   autocomplete="tel" placeholder="010-0000-0000" maxlength="13">
-          </div>
-          <div class="field" data-visit-only>
-            <label class="field__label" for="f-visit">희망 방문일시</label>
-            <input id="f-visit" name="visit_at" type="text" autocomplete="off"
-                   placeholder="예: 9/13(토) 오후 2시">
-          </div>
-        </div>
-
-        <div class="field--row">
-          <div class="field">
-            <label class="field__label" for="f-type">관심 주택형</label>
-            <select id="f-type" name="unit_type">
-              <option value="">선택 안 함</option>
-              <option value="84A">84A타입 · 4BAY 판상형</option>
-              <option value="84B">84B타입 · 2BAY 타워형</option>
-              <option value="both">두 타입 모두</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="field__label" for="f-region">거주 지역</label>
-            <select id="f-region" name="region">
-              <option value="">선택 안 함</option>
-              <option>전주시 덕진구</option>
-              <option>전주시 완산구</option>
-              <option>완주군</option>
-              <option>익산 · 군산</option>
-              <option>전북 기타</option>
-              <option>전북 외 지역</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="f-memo">문의 내용</label>
-          <textarea id="f-memo" name="memo" rows="3" placeholder="궁금하신 점을 남겨 주세요 (선택)"></textarea>
-        </div>
-
-        <label class="consent">
-          <input type="checkbox" name="agree" id="f-agree" required>
-          <span>
-            <b>[필수]</b> 개인정보 수집·이용에 동의합니다.
-            <a href="privacy.html" target="_blank" rel="noopener">전문 보기</a><br>
-            <span style="color:var(--w-a50);font-size:.75rem">
-              수집항목: 성명, 연락처, 희망 방문일시, 관심 주택형, 거주 지역, 문의 내용 ·
-              수집목적: 분양 관련 정보 제공 및 상담 ·
-              보유기간: 분양 종료 후 6개월 이내 파기
-            </span>
-          </span>
-        </label>
-
-        <label class="consent">
-          <input type="checkbox" name="agree_marketing" id="f-agree2">
-          <span><b>[선택]</b> 광고성 정보 수신(문자·전화)에 동의합니다.</span>
-        </label>
-
-        <button class="btn btn--brand btn--lg btn--block" type="submit" id="leadSubmit">신청하기</button>
-
-        <p class="formmsg" id="formMsg" hidden role="status"></p>
+      <!-- 방문예약·관심고객 등록 접수는 구글 설문지로 받습니다 (2026-09-22).
+           별도 서버 연동 없이 구글이 응답을 직접 수집·저장합니다(응답 시트는
+           https://docs.google.com/forms/d/1osivUUtFyxG0fCC1rgVLZMR7BQjpdTeutEaFsMGYW1k/edit#responses
+           에서 확인). id="visit-form" 은 "방문예약" 버튼들이 이 폼으로 바로
+           스크롤하기 위한 목표 지점입니다(js/main.js 9번 항목).
+           폼을 바꾸려면: 구글폼 편집 화면에서 새 링크의 뷰폼 주소 뒤에
+           ?embedded=true 를 붙여 아래 src 와, formnote 의 "새 창에서 열기"
+           href 두 곳에 반영하세요. -->
+      <div class="gform" id="visit-form" data-reveal data-delay="1">
+        <iframe class="gform__frame"
+                src="https://docs.google.com/forms/d/e/1FAIpQLSc6CUSFr0uLEXmbCYdDDhVcHROMbLLaH27gu60OR7q8IOqphg/viewform?embedded=true"
+                title="북전주 광신프로그레스 방문예약 및 관심고객 등록 신청서"
+                loading="lazy">로드하는 중입니다…</iframe>
 
         <p class="formnote">
           ※ 방문예약·사전등록은 청약 및 계약과 무관하며 어떠한 우선권도 부여되지 않습니다.<br>
-          ※ 접수 시 담당 상담사(강수진 과장)에게 즉시 전달되며, 확인 후 유선으로 회신드립니다.<br>
-          ※ 동의를 거부하실 수 있으나, 거부 시 분양 정보 안내 서비스 제공이 제한됩니다.
+          ※ 접수 내용은 구글 설문지를 통해 담당 상담사(강수진 과장)에게 직접 전달됩니다.<br>
+          ※ 위 화면이 보이지 않으면
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSc6CUSFr0uLEXmbCYdDDhVcHROMbLLaH27gu60OR7q8IOqphg/viewform" target="_blank" rel="noopener">여기를 눌러 새 창에서 여세요</a>.
         </p>
-      </form>
+      </div>
     </div>
   </div>
 </section>
@@ -1081,7 +1001,7 @@
         <nav aria-label="정책 링크">
           <a href="privacy.html">개인정보처리방침</a>
           <a href="#faq">청약 유의사항</a>
-          <a href="#contact">상담 문의</a>
+          <a href="#visit-form">상담 문의</a>
         </nav>
       </div>
     </div>
@@ -1090,7 +1010,7 @@
 
 <!-- ================= 상시 버튼 (방문예약 · 전화) ================= -->
 <div class="float">
-  <a class="is-visit" href="#contact" aria-label="방문예약" title="방문예약">
+  <a class="is-visit" href="#visit-form" aria-label="방문예약" title="방문예약">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 2v4M16 2v4M3.5 9.5h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="m9.5 14.5 1.8 1.8 3.7-3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span class="float__txt">방문예약</span>
   </a>
@@ -1103,7 +1023,7 @@
 
 <nav class="stickycta" aria-label="빠른 상담">
   <a href="tel:01081144638">전화 통화</a>
-  <a href="#contact">방문예약</a>
+  <a href="#visit-form">방문예약</a>
 </nav>
 
 <!-- 애니메이션: GSAP + ScrollTrigger (자체 호스팅 · defer 라 렌더링을 막지 않음)
@@ -1112,7 +1032,7 @@
 <script src="js/ScrollTrigger.min.js" defer></script>
 <!-- 사진 목록 (여기 파일만 고치면 사진이 바뀝니다) → main.js 보다 먼저 로드 -->
 <script src="js/photos.js?v=4" defer></script>
-<script src="js/main.js?v=11" defer></script>
+<script src="js/main.js?v=13" defer></script>
 <script src="js/anim.js?v=9" defer></script>
 </body>
 </html>
