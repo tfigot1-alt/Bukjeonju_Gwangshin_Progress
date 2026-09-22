@@ -530,6 +530,7 @@ h3.display { font-size: var(--fs-h3); line-height: 1.25; }
 
 /* ---------- 9. 사업개요 표 ---------- */
 .spec { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: clamp(28px,4vw,72px); align-items: start; }
+.spec > * { min-width: 0; }
 @media (max-width: 900px) { .spec { grid-template-columns: 1fr; } }
 .dtable { width: 100%; }
 .dtable tr { border-bottom: 1px solid var(--i-a12); }
@@ -551,7 +552,27 @@ h3.display { font-size: var(--fs-h3); line-height: 1.25; }
 .gtable thead th { background: var(--ink); color: #fff; font-weight: 500; font-size: .8125rem; letter-spacing: .01em; border-bottom: 0; }
 .gtable tbody th { font-weight: 600; text-align: left; }
 .gtable tfoot td, .gtable tfoot th { background: var(--i-a06); font-weight: 700; }
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-scroll {
+  width: 100%; max-width: 100%; min-width: 0;
+  overflow-x: auto; overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+.table-hint { display: none; }
+@media (max-width: 640px) {
+  .table-hint {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: -10px 0 10px; padding: 8px 10px;
+    border: 1px solid var(--i-a12); color: var(--i-a60);
+    font-size: .72rem; line-height: 1.4;
+  }
+  .table-hint span { color: var(--brand-deep); font-size: 1rem; }
+  .gtable { width: 660px; min-width: 660px; table-layout: fixed; font-size: .75rem; }
+  .gtable th, .gtable td { padding: 11px 7px; white-space: nowrap; }
+  .gtable th:first-child { width: 72px; }
+  .gtable th:nth-child(2) { width: 58px; }
+}
 
 /* ---------- 10. 주택형 카드 ---------- */
 .units { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: clamp(20px,3vw,44px); }
