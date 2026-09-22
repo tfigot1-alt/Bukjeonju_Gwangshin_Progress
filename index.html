@@ -49,13 +49,17 @@
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Nanum+Myeongjo:wght@400;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/style.css?v=10">
 
 <!-- 애니메이션 초기 상태 활성화 (JS 꺼짐 · '동작 줄이기' 설정이면 적용 안 됨) -->
 <script>
 (function () {
   var d = document.documentElement;
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var motionChoice = new URLSearchParams(window.location.search).get('motion');
+  if (motionChoice === 'on') reduced = false;
+  if (motionChoice === 'off') reduced = true;
+  window.__motionReduced = reduced;
   function shStatic() {
     var s = document.querySelector('.shero'); if (s) s.classList.add('shero--static');
   }
@@ -105,7 +109,7 @@
       "url": "https://www.example.com/",
       "telephone": "+82-10-8114-4638",
       "priceRange": "$$",
-      "employee": { "@type": "Person", "name": "김수진", "jobTitle": "과장", "telephone": "+82-10-8114-4638" },
+      "employee": { "@type": "Person", "name": "강수진", "jobTitle": "과장", "telephone": "+82-10-8114-4638" },
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "덕진구 호성동 2가 631-103",
@@ -165,7 +169,6 @@
       <a href="#location">입지환경</a>
       <a href="#premium">프리미엄</a>
       <a href="#plan">단지·평면</a>
-      <a href="#sales">분양안내</a>
       <a href="#gallery">홍보관</a>
     </nav>
 
@@ -183,7 +186,6 @@
     <a class="mm__link" href="#location">입지환경</a>
     <a class="mm__link" href="#premium">프리미엄</a>
     <a class="mm__link" href="#plan">단지·평면</a>
-    <a class="mm__link" href="#sales">분양안내</a>
     <a class="mm__link" href="#gallery">홍보관</a>
     <a class="mm__link" href="#faq">자주 묻는 질문</a>
   </nav>
@@ -231,7 +233,11 @@
         </ul>
       </div>
 
-      <a class="shero__hint" href="#overview" aria-label="아래로 스크롤">SCROLL <i></i></a>
+      <div class="shero__controls">
+        <a class="shero__skip" href="#overview">단지 바로 둘러보기 <span aria-hidden="true">↗</span></a>
+        <a class="shero__skip shero__motion" href="?motion=on#top" hidden>모션 켜기</a>
+      </div>
+      <a class="shero__hint" href="#overview" aria-label="사업개요로 이동">스크롤하여 만나보세요 <i></i></a>
       <div class="shero__bar" aria-hidden="true"><i></i></div>
     </div>
   </div>
@@ -457,7 +463,7 @@
         <div class="loclist">
           <div class="loclist__row"><span class="loclist__cat">사업지</span><span class="loclist__body">전주시 덕진구 고랑동 742번지 일원</span><span class="loclist__dist">SITE</span></div>
           <div class="loclist__row"><span class="loclist__cat">홍보관</span><span class="loclist__body">전주시 덕진구 호성동 2가 631-103</span><span class="loclist__dist">H.O</span></div>
-          <div class="loclist__row"><span class="loclist__cat">분양 상담</span><span class="loclist__body">김수진 과장</span><span class="loclist__dist">STAFF</span></div>
+          <div class="loclist__row"><span class="loclist__cat">분양 상담</span><span class="loclist__body">강수진 과장</span><span class="loclist__dist">STAFF</span></div>
           <div class="loclist__row"><span class="loclist__cat">관람시간</span><span class="loclist__body">오전 10:00 ~ 오후 6:00 (연중무휴)</span><span class="loclist__dist">10–18</span></div>
           <div class="loclist__row"><span class="loclist__cat">전화</span><span class="loclist__body"><a href="tel:01081144638" style="font-weight:600">010-8114-4638</a></span><span class="loclist__dist">TEL</span></div>
         </div>
@@ -711,7 +717,6 @@
         <figure class="media media--1x1 gcell gcell--tall"><img src="images/interior-bedroom.jpg" alt="84㎡ 유닛 침실" loading="lazy"></figure>
         <figure class="media media--4x3 gcell"><img src="images/exterior-01.jpg" alt="단지 투시도" loading="lazy"></figure>
         <figure class="media media--4x3 gcell"><img src="images/community-01.jpg" alt="단지 조감도" loading="lazy"></figure>
-        <figure class="media media--4x3 gcell"><img src="images/community-02.jpg" alt="단지 내 조경 및 놀이터" loading="lazy"></figure>
       </div>
     </noscript>
 
@@ -745,90 +750,6 @@
         익산 동산동 · 익산 남중동 · 구미 원평동 · 완주 봉동 · 화순 대리 · 나주 남평 ·
         충남 보령(예정) · 경북 칠곡(예정) · 전주 효자동(예정) · 속초 동명동(예정) · 여수 우두리(예정)
       </p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 분양안내 ================= -->
-<section class="section section--sand" id="sales">
-  <div class="wrap">
-    <div class="sec-head sec-head--split" data-reveal>
-      <div class="sec-head">
-        <span class="eyebrow">09 — Sales Information</span>
-        <h2 class="display">분양 일정 및<br><em>계약 조건</em></h2>
-      </div>
-      <p class="lede" data-anim="words">
-        입주자모집공고 승인 후 확정된 일정과 공급금액을 이 페이지에 즉시 게시합니다.
-        정확한 정보는 반드시 입주자모집공고문을 확인해 주시기 바랍니다.
-      </p>
-    </div>
-
-    <div class="timeline" style="margin-top:clamp(36px,4.5vw,64px)" data-reveal>
-      <div class="tl is-now">
-        <span class="tl__step">Step 01</span>
-        <span class="tl__date" data-anim="chars">진행 중</span>
-        <span class="tl__name" data-anim="fade-up">관심고객 사전등록</span>
-      </div>
-      <div class="tl">
-        <span class="tl__step">Step 02</span>
-        <span class="tl__date" data-anim="chars"><span class="todo">00.00</span></span>
-        <span class="tl__name" data-anim="fade-up">입주자모집공고</span>
-      </div>
-      <div class="tl">
-        <span class="tl__step">Step 03</span>
-        <span class="tl__date" data-anim="chars"><span class="todo">00.00</span></span>
-        <span class="tl__name" data-anim="fade-up">특별공급 / 1·2순위 청약</span>
-      </div>
-      <div class="tl">
-        <span class="tl__step">Step 04</span>
-        <span class="tl__date" data-anim="chars"><span class="todo">00.00</span></span>
-        <span class="tl__name" data-anim="fade-up">당첨자 발표</span>
-      </div>
-      <div class="tl">
-        <span class="tl__step">Step 05</span>
-        <span class="tl__date" data-anim="chars"><span class="todo">00.00</span></span>
-        <span class="tl__name" data-anim="fade-up">정당 계약</span>
-      </div>
-    </div>
-
-    <div class="spec" style="margin-top:clamp(44px,5.5vw,80px)">
-      <div data-reveal>
-        <h3 class="display" style="margin-bottom:24px">공급금액 및 납부조건</h3>
-        <div class="table-scroll">
-          <table class="gtable">
-            <caption>※ 아래 금액은 입주자모집공고 승인 후 확정되며, 확정 즉시 본 페이지에 게시합니다.</caption>
-            <thead>
-              <tr><th scope="col">타입</th><th scope="col">세대수</th><th scope="col">공급금액</th><th scope="col">계약금</th><th scope="col">중도금</th><th scope="col">잔금</th></tr>
-            </thead>
-            <tbody>
-              <tr><th scope="row">84A</th><td>315</td><td class="todo">공고 후 확정</td><td class="todo">—</td><td class="todo">—</td><td class="todo">—</td></tr>
-              <tr><th scope="row">84B</th><td>37</td><td class="todo">공고 후 확정</td><td class="todo">—</td><td class="todo">—</td><td class="todo">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p style="margin-top:20px;font-size:.8125rem;color:var(--i-a40);line-height:1.9">
-          ※ 발코니 확장비 및 유상옵션 비용은 공급금액에 포함되지 않으며 별도입니다.<br>
-          ※ 중도금 대출 관련 조건(무이자·이자후불제 여부, 취급 금융기관, 한도)은 확정 후 공지합니다.
-        </p>
-      </div>
-
-      <div data-reveal data-delay="1">
-        <h3 class="display" style="margin-bottom:24px">청약 안내</h3>
-        <table class="dtable">
-          <tbody>
-            <tr><th scope="row">공급 유형</th><td>민간분양</td></tr>
-            <tr><th scope="row">청약 접수</th><td>한국부동산원 청약홈 (www.applyhome.co.kr)</td></tr>
-            <tr><th scope="row">청약통장</th><td>주택청약종합저축 (가입기간·예치금 요건은 공고문 확인)</td></tr>
-            <tr><th scope="row">거주 요건</th><td>입주자모집공고일 현재 기준 — 공고문 확인</td></tr>
-            <tr><th scope="row">분양보증</th><td>주택도시보증공사(HUG) 주택분양보증</td></tr>
-            <tr><th scope="row">입주 예정</th><td><span class="todo">공고 후 확정</span></td></tr>
-          </tbody>
-        </table>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
-          <a class="btn btn--ink" href="https://www.applyhome.co.kr" target="_blank" rel="noopener">청약홈 바로가기 <span class="btn__arrow">→</span></a>
-          <a class="btn btn--ghost" href="#contact">일정 알림 신청</a>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -896,8 +817,8 @@
       <div class="acc__item">
         <button class="acc__btn" data-anim="words" data-anim-stagger="0.02" data-anim-start="top 92%" aria-expanded="false">분양가는 언제 공개되나요?<span class="acc__ico"></span></button>
         <div class="acc__panel"><div class="acc__inner"><div>
-          공급금액은 입주자모집공고 승인 절차를 거쳐 확정됩니다. 확정 즉시 본 홈페이지
-          '분양안내' 섹션과 입주자모집공고문을 통해 타입별 공급금액, 계약금·중도금·잔금 납부조건,
+          공급금액은 입주자모집공고 승인 절차를 거쳐 확정됩니다. 입주자모집공고문을 통해
+          타입별 공급금액, 계약금·중도금·잔금 납부조건,
           발코니 확장비 및 유상옵션 금액을 모두 공개합니다.
           사전등록해 주신 분께는 공고 시점에 문자로 안내드립니다.
         </div></div></div>
@@ -992,7 +913,7 @@
         <hr class="hr" style="margin-block:32px">
 
         <div style="display:grid;gap:8px;font-size:.9375rem">
-          <div style="display:flex;gap:12px"><span style="color:var(--w-a50);min-width:72px">분양 상담</span><span>김수진 과장</span></div>
+          <div style="display:flex;gap:12px"><span style="color:var(--w-a50);min-width:72px">분양 상담</span><span>강수진 과장</span></div>
           <div style="display:flex;gap:12px"><span style="color:var(--w-a50);min-width:72px">전화</span><a href="tel:01081144638" style="font-weight:600">010-8114-4638</a></div>
           <div style="display:flex;gap:12px"><span style="color:var(--w-a50);min-width:72px">관람시간</span><span>10:00 – 18:00 (연중무휴)</span></div>
           <div style="display:flex;gap:12px"><span style="color:var(--w-a50);min-width:72px">홍보관</span><span>전북특별자치도 전주시 덕진구 호성동 2가 631-103</span></div>
@@ -1000,7 +921,7 @@
       </div>
 
       <!-- 폼 수신 엔드포인트: data-endpoint 에 Google Apps Script 웹앱 URL 을 넣으면
-           제출 시 김수진 과장(010-8114-4638)에게 문자(SMS)가 발송됩니다. (api/폼연동-안내.md 참고)
+           제출 시 강수진 과장(010-8114-4638)에게 문자(SMS)가 발송됩니다. (api/폼연동-안내.md 참고)
            비어 있으면 입력 검증만 되고 전송되지 않습니다. -->
       <form class="form" id="leadForm" data-reveal data-delay="1" novalidate
             method="post" action="" data-endpoint="">
@@ -1094,7 +1015,7 @@
 
         <p class="formnote">
           ※ 방문예약·사전등록은 청약 및 계약과 무관하며 어떠한 우선권도 부여되지 않습니다.<br>
-          ※ 접수 시 담당 상담사(김수진 과장)에게 즉시 전달되며, 확인 후 유선으로 회신드립니다.<br>
+          ※ 접수 시 담당 상담사(강수진 과장)에게 즉시 전달되며, 확인 후 유선으로 회신드립니다.<br>
           ※ 동의를 거부하실 수 있으나, 거부 시 분양 정보 안내 서비스 제공이 제한됩니다.
         </p>
       </form>
@@ -1118,7 +1039,7 @@
       <div>
         <h3>분양 문의</h3>
         <dl>
-          <div><dt>상담</dt><dd>김수진 과장</dd></div>
+          <div><dt>상담</dt><dd>강수진 과장</dd></div>
           <div><dt>전화</dt><dd><a href="tel:01081144638">010-8114-4638</a></dd></div>
           <div><dt>홍보관</dt><dd>전북특별자치도 전주시 덕진구 호성동 2가 631-103</dd></div>
           <div><dt>관람시간</dt><dd>10:00 – 18:00 (연중무휴)</dd></div>
@@ -1184,8 +1105,8 @@
 <script src="js/gsap.min.js" defer></script>
 <script src="js/ScrollTrigger.min.js" defer></script>
 <!-- 사진 목록 (여기 파일만 고치면 사진이 바뀝니다) → main.js 보다 먼저 로드 -->
-<script src="js/photos.js?v=3" defer></script>
-<script src="js/main.js?v=8" defer></script>
-<script src="js/anim.js?v=7" defer></script>
+<script src="js/photos.js?v=4" defer></script>
+<script src="js/main.js?v=9" defer></script>
+<script src="js/anim.js?v=8" defer></script>
 </body>
 </html>

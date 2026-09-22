@@ -35,7 +35,7 @@
 
   var root = document.documentElement;
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduced = typeof window.__motionReduced === 'boolean' ? window.__motionReduced : window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* 0~1 구간 고정 헬퍼 (히어로 스크럽 등에서 사용) */
   function clamp(v, lo, hi) { lo = lo == null ? 0 : lo; hi = hi == null ? 1 : hi;
     return v < lo ? lo : (v > hi ? hi : v); }
@@ -384,6 +384,15 @@
      5) 부팅
      ================================================================== */
   function boot() {
+    var motionSwitch = document.querySelector('.shero__motion');
+    if (motionSwitch) {
+      var motionUrl = new URL(window.location.href);
+      motionUrl.searchParams.set('motion', reduced ? 'on' : 'off');
+      motionUrl.hash = 'top';
+      motionSwitch.href = motionUrl.href;
+      motionSwitch.textContent = reduced ? '모션 켜기' : '모션 끄기';
+      motionSwitch.hidden = false;
+    }
     window.__animBooted = true;
     if (reduced) { revealAll(); return; }
     if (typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') {
@@ -534,22 +543,18 @@
     if (chars.length) {
       gsap.from(chars, { yPercent: 120, duration: 1.1, ease: 'power3.out', stagger: 0.028 });
     }
-    gsap.from(badge, { y: 20, opacity: 0, duration: .9, ease: 'power3.out', delay: .1 });
+    gsap.from(badge, { y: 20, duration: .9, ease: 'power3.out', delay: .1 });
 
-    var started = false;
+    // 실제 tween의 진행률을 보간해야 스크롤을 멈춘 뒤에도 부드럽게 정착한다.
+    var playhead = { progress: 0 };
+    var mobile = window.matchMedia('(max-width: 820px)').matches;
 
-    ScrollTrigger.create({
-      trigger: sec,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.55,
-      onUpdate: function (self) {
-        var p = self.progress;
-        if (p > 0.004) started = true;
+    function renderHero() {
+        var p = playhead.progress;
 
         // 배경: A 줌인 → B 로 크로스페이드
-        if (imgA) imgA.style.transform = 'scale(' + (1.04 + p * 0.15).toFixed(4) + ')';
-        var bf = clamp((p - 0.32) / 0.34, 0, 1);
+        if (imgA) imgA.style.transform = 'scale(' + (1.04 + p * (mobile ? 0.09 : 0.20)).toFixed(4) + ')';
+        var bf = clamp((p - 0.30) / 0.35, 0, 1);
         if (layB) layB.style.opacity = bf.toFixed(3);
         if (imgB) imgB.style.transform = 'scale(' + (1.16 - bf * 0.10).toFixed(4) + ')';
 
@@ -557,29 +562,39 @@
         var tt = 1 - clamp((p - 0.05) / 0.32, 0, 1);
         if (title) {
           title.style.opacity = tt.toFixed(3);
-          title.style.transform = 'translateY(' + ((1 - tt) * -32).toFixed(1) + 'px)';
-          title.style.filter = 'blur(' + ((1 - tt) * 12).toFixed(1) + 'px)';
+          title.style.transform = 'translateY(' + ((1 - tt) * -48).toFixed(1) + 'px) scale(' + (1 + (1 - tt) * .06).toFixed(3) + ')';
+          title.style.filter = mobile ? 'none' : 'blur(' + ((1 - tt) * 8).toFixed(1) + 'px)';
         }
         if (badge) badge.style.opacity = tt.toFixed(3);
 
         // 태그라인: 후반에 blur-focus 로 등장, 끝에서 살짝 물러남
         var gin  = clamp((p - 0.52) / 0.22, 0, 1);
-        var gout = 1 - clamp((p - 0.9) / 0.1, 0, 1);
+        var gout = 1;
         if (tag) {
           tag.style.opacity = (gin * gout).toFixed(3);
           tag.style.transform = 'translateY(calc(-50% + ' + ((1 - gin) * 22).toFixed(1) + 'px))';
-          tag.style.filter = 'blur(' + ((1 - gin) * 9).toFixed(1) + 'px)';
+          tag.style.filter = mobile ? 'none' : 'blur(' + ((1 - gin) * 8).toFixed(1) + 'px)';
         }
 
-        // 지표+카운트다운: 마지막 구간에서 떠오름
+        // 단지 지표: 마지막 구간에서 떠오름
         var rt = clamp((p - 0.8) / 0.2, 0, 1);
         if (resolve) {
           resolve.style.opacity = rt.toFixed(3);
           resolve.style.transform = 'translateY(' + ((1 - rt) * 26).toFixed(1) + 'px)';
         }
 
-        if (hint) hint.style.opacity = started ? '0' : '1';
+        if (hint) {
+          hint.style.opacity = (1 - clamp(p / .12, 0, 1)).toFixed(3);
+          hint.style.visibility = p > .12 ? 'hidden' : 'visible';
+        }
         if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    }
+    renderHero();
+    gsap.to(playhead, {
+      progress: 1, ease: 'none', onUpdate: renderHero,
+      scrollTrigger: {
+        trigger: sec, start: 'top top', end: 'bottom bottom',
+        scrub: mobile ? .35 : .85, invalidateOnRefresh: true
       }
     });
 

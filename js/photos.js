@@ -109,8 +109,6 @@ window.PHOTOS = {
     { file: "images/interior-bedroom.jpg", alt: "84㎡ 유닛 침실",         caption: "침실",          size: "tall" },
     { file: "images/exterior-01.jpg",      alt: "단지 투시도",           caption: "투시도" },
     { file: "images/community-01.jpg",     alt: "단지 조감도",           caption: "조감도" },
-    { file: "images/exterior-02.jpg",      alt: "단지 투시도(주간)",     caption: "주간 투시도" },
-    { file: "images/community-02.jpg",     alt: "단지 내 조경 및 놀이터", caption: "조경 · 놀이터" },
     // ↑ 사진을 더 넣고 싶으면 이 줄을 복사해 아래에 붙이고 file/alt/caption 만 바꾸세요.
     // { file: "images/community-03.jpg",  alt: "커뮤니티 라운지",       caption: "커뮤니티" },
   ],
