@@ -13,7 +13,7 @@ Bukjeonju_Gwangshin_Progress/
 ├── sitemap.xml
 ├── css/style.css
 ├── js/photos.js        ← ★ 사진 목록 (여기만 고치면 홈페이지 사진이 바뀜)
-├── js/main.js          ← 사진 주입 · 메뉴 · 탭 · 아코디언 · 스크롤 진행바 · 라이트박스
+├── js/main.js          ← 사진 주입 · 메뉴 · 탭 · 아코디언 · 스크롤 진행바 · 라이트박스 · 폼
 ├── js/anim.js          ← 애니메이션 (GSAP, 자체호스팅 js/gsap.min.js · ScrollTrigger.min.js)
 └── images/             ← 사진 넣는 곳 (사진-넣는-법.md 참고)
 ```
@@ -181,23 +181,30 @@ JSON-LD 안의 `url` / `@id` / `image`, `robots.txt` 의 Sitemap, `sitemap.xml` 
 
 ---
 
-# 📨 방문예약 · 관심고객 등록 접수 — 구글폼
+# 📨 방문예약 · 관심고객 등록 접수 — 구글 시트 자동 저장
 
-`#contact` 섹션의 신청 양식은 **구글 설문지(Google Forms)를 그대로 iframe 임베드**한 것입니다
-(2026-09-22, 담당자 요청으로 자체 서버 연동 대신 구글폼으로 전환). 별도 배포·API 키·SMS 연동이
-필요 없고, 응답은 구글폼 자체의 "응답" 탭 / 연결된 구글 시트에서 바로 확인할 수 있습니다.
+`#contact` 섹션은 홈페이지 디자인 그대로인 **커스텀 폼**(`#leadForm`)이며,
+제출되면 **Google Apps Script 웹앱**을 통해 **구글 시트에 자동 저장**됩니다
+(2026-09-22). 저장 성공 시 *"방문예약 신청이 완료되었습니다. 담당자 확인 후
+안내드리겠습니다."*, 전송 실패 시 *"일시적인 오류로 신청이 완료되지 않았습니다.
+잠시 후 다시 시도해 주세요."* 가 표시됩니다(`js/main.js` 8번 항목).
 
-**현재 연결된 폼**: `https://docs.google.com/forms/d/e/1FAIpQLSc6CUSFr0uLEXmbCYdDDhVcHROMbLLaH27gu60OR7q8IOqphg/viewform`
-(질문 5개 — 성함·연락처·희망 방문일시·개인정보 동의[필수]·광고성 정보 수신 동의[선택])
+**연동 방법(약 10분)**: `api/폼연동-안내.md` 를 그대로 따라 하세요. 요약:
 
-**폼을 바꾸려면** `index.html` 의 `.gform__frame` `src` 값과, 바로 아래 `formnote`의
-"새 창에서 열기" 링크 href 두 곳을 새 폼 주소로 교체하세요
-(주소 끝에 `?embedded=true` 를 붙인 값을 `src` 에 사용).
+1. 구글 시트 생성 → 시트 ID 복사
+2. Apps Script 새 프로젝트에 `api/apps-script.gs` 붙여넣기
+3. **스크립트 속성**(Apps Script 프로젝트 설정, Google 서버에만 저장됨)에 `SHEET_ID` 등록
+4. 웹 앱으로 배포(액세스 권한: 모든 사용자) → 나온 URL 을
+   `index.html` 의 `<form id="leadForm" ... data-endpoint="">` 에 붙여넣기
 
-**응답을 문자(SMS)로도 받고 싶다면**: 구글폼 우측 상단 종 모양 아이콘으로 이메일 알림을 켜거나,
-구글폼의 "응답 → 스프레드시트에서 보기"로 연결한 구글 시트에 Apps Script 트리거를 달아
-`api/apps-script.gs`(알리고 SMS 연동 참고용, 현재는 미사용)를 응용해 문자 발송을 붙일 수 있습니다.
-자세한 절차는 `api/폼연동-안내.md` 참고(예전 자체 폼 연동용으로 작성된 문서라 현재 구조와는 일부 다릅니다).
+**보안**: API 키·시트 ID 등은 이 공개 저장소의 어떤 파일에도 들어가지 않습니다.
+`index.html`/`js/main.js` 가 아는 건 "웹앱 실행 주소"뿐이고(비밀값 아님), 실제 저장
+로직과 그 안의 값(시트 ID, 문자 API 키 등)은 전부 Apps Script의 **스크립트 속성**
+(Google 서버 측 저장소)에만 존재합니다 — 정적 사이트(GitHub Pages)에는 서버 환경변수
+자체가 없으므로 이 방식이 사실상 유일하게 안전한 구조입니다.
+
+문자(SMS) 알림은 선택 사항이며(알리고 연동, `api/폼연동-안내.md` STEP 4),
+켜지 않으면 시트 저장만 동작합니다.
 
 ---
 

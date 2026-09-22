@@ -786,14 +786,6 @@ figcaption { margin-top: 10px; font-size: .8125rem; color: var(--i-a40); letter-
 .formnote { font-size: .75rem; line-height: 1.8; color: var(--w-a50); }
 .formmsg { font-size: .875rem; padding: 14px 16px; border: 1px solid var(--brand); color: var(--brand); border-radius: var(--radius); }
 
-/* 방문예약 접수 — 구글폼 임베드 (2026-09-22) */
-.gform { display: grid; gap: 16px; }
-.gform__frame {
-  width: 100%; min-height: 1060px; display: block;
-  background: #fff; border: 1px solid var(--w-a15); border-radius: var(--radius);
-}
-@media (max-width: 640px) { .gform__frame { min-height: 1320px; } }
-
 .benefit { display: grid; gap: 14px; }
 .benefit li { display: flex; gap: 12px; align-items: flex-start; font-size: .9375rem; line-height: 1.7; color: var(--w-a70); }
 .benefit li::before { content: "—"; color: var(--brand); flex: none; }
