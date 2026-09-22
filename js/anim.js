@@ -356,19 +356,17 @@
     root.classList.remove('anim-ready');
     root.classList.add('anim-fallback', 'anim-static');
     $$('[data-reveal], .eyebrow, [data-anim], section.section').forEach(function (el) { el.classList.add('is-in'); el.classList.add('sect-in'); });
-    var hero = document.querySelector('.hero'); if (hero) hero.classList.add('is-in');
     var shero = document.querySelector('.shero'); if (shero) shero.classList.add('shero--static');
   }
 
   function fallbackObserver() {
     root.classList.remove('anim-ready');
     root.classList.add('anim-fallback');
-    var hero = document.querySelector('.hero'); if (hero) hero.classList.add('is-in');
     var shero = document.querySelector('.shero'); if (shero) shero.classList.add('shero--static');
     var items = $$('[data-reveal], .eyebrow, [data-anim], section.section');
     if (!('IntersectionObserver' in window)) {
       items.forEach(function (el) { el.classList.add('is-in'); el.classList.add('sect-in'); });
-      heroSlider(); return;
+      return;
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
@@ -380,7 +378,6 @@
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
     items.forEach(function (el) { io.observe(el); });
-    heroSlider();
   }
 
   /* ==================================================================
@@ -388,7 +385,7 @@
      ================================================================== */
   function boot() {
     window.__animBooted = true;
-    if (reduced) { revealAll(); heroSlider(); return; }
+    if (reduced) { revealAll(); return; }
     if (typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') {
       fallbackObserver(); return;
     }
@@ -411,7 +408,6 @@
     safe(mediaWipe, 'mediaWipe');
     safe(countUp, 'countUp');
     safe(parallax, 'parallax');
-    safe(heroSlider, 'heroSlider');
     safe(armCatchUp, 'armCatchUp');
     try { ScrollTrigger.refresh(); } catch (e) {}
 
@@ -657,12 +653,6 @@
      10) 스크롤 패럴랙스
      ================================================================== */
   function parallax() {
-    var hero = document.querySelector('.hero');
-    if (hero) {
-      gsap.to('.hero__bg', { yPercent: 6, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1 } });
-      gsap.to('.hero__aside', { yPercent: -12, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1 } });
-      gsap.to('.hero__inner', { opacity: 0, y: -40, ease: 'none', scrollTrigger: { trigger: hero, start: '35% top', end: 'bottom top', scrub: 1 } });
-    }
     var band = document.querySelector('.ctaband');
     if (band) {
       gsap.fromTo('.ctaband__bg img',
@@ -693,58 +683,6 @@
         scrollTrigger: { trigger: el.closest('.sect') || el, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
       });
     });
-  }
-
-  /* ==================================================================
-     11) 히어로 배경 슬라이더 (조감도 ↔ 투시도)
-     ================================================================== */
-  function heroSlider() {
-    var box = document.querySelector('[data-hero-slider]');
-    if (!box) return;
-    var slides = $$('.hero__slide', box);
-    if (slides.length < 2) return;
-
-    var allEmpty = slides.every(function (s) { return s.classList.contains('is-empty'); });
-    if (allEmpty) {
-      var aside = document.querySelector('.hero__aside');
-      if (aside) aside.style.display = 'none';
-      return;
-    }
-
-    var dots = $$('[data-hero-dots] button');
-    var inset = document.querySelector('.hero__inset');
-    var insetImg = inset && inset.querySelector('img');
-    var insetCap = inset && inset.querySelector('.hero__inset-cap');
-    var caps = ['조감도', '투시도'];
-    var cur = 0, timer = null;
-    var INTERVAL = 6500;
-
-    function go(n) {
-      n = (n + slides.length) % slides.length;
-      if (n === cur) return;
-      slides[cur].classList.remove('is-active');
-      slides[n].classList.add('is-active');
-      var img = slides[n].querySelector('img');
-      if (img) { img.style.animation = 'none'; void img.offsetWidth; img.style.animation = ''; }
-      if (dots[cur]) dots[cur].classList.remove('is-active');
-      if (dots[n]) dots[n].classList.add('is-active');
-      if (insetImg) {
-        var other = slides[(n + 1) % slides.length].querySelector('img');
-        if (other && other.currentSrc) insetImg.src = other.currentSrc;
-        else if (other) insetImg.src = other.getAttribute('src');
-      }
-      if (insetCap) insetCap.textContent = caps[(n + 1) % caps.length] || '';
-      cur = n;
-    }
-    function next() { go(cur + 1); }
-    function play() { stop(); if (!reduced) timer = setInterval(next, INTERVAL); }
-    function stop() { if (timer) { clearInterval(timer); timer = null; } }
-
-    dots.forEach(function (d) {
-      d.addEventListener('click', function () { go(parseInt(d.getAttribute('data-go'), 10) || 0); play(); });
-    });
-    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else play(); });
-    setTimeout(play, 3200);
   }
 
   /* ==================================================================

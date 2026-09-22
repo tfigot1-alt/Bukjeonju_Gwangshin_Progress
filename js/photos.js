@@ -105,7 +105,7 @@ window.PHOTOS = {
      ───────────────────────────────────────────────────────────── */
 
   gallery: [
-    { file: "images/interior-living.png",  alt: "84㎡ 유닛 거실 및 주방", caption: "거실 · 주방",   size: "wide" },
+    { file: "images/interior-living.jpg",  alt: "84㎡ 유닛 거실 및 주방", caption: "거실 · 주방",   size: "wide" },
     { file: "images/interior-bedroom.jpg", alt: "84㎡ 유닛 침실",         caption: "침실",          size: "tall" },
     { file: "images/exterior-01.jpg",      alt: "단지 투시도",           caption: "투시도" },
     { file: "images/community-01.jpg",     alt: "단지 조감도",           caption: "조감도" },

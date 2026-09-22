@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /privacy.html
 
 # 네이버 검색로봇
 User-agent: Yeti

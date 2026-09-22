@@ -6,15 +6,15 @@
 ## 폴더 구조
 
 ```
-site/
+Bukjeonju_Gwangshin_Progress/
 ├── index.html          ← 메인 (전 섹션)
 ├── privacy.html        ← 개인정보처리방침
 ├── robots.txt
 ├── sitemap.xml
 ├── css/style.css
 ├── js/photos.js        ← ★ 사진 목록 (여기만 고치면 홈페이지 사진이 바뀜)
-├── js/main.js          ← 사진 주입 · 메뉴 · 탭 · 아코디언 · 카운트다운 · 폼
-├── js/anim.js          ← 애니메이션 (GSAP)
+├── js/main.js          ← 사진 주입 · 메뉴 · 탭 · 아코디언 · 스크롤 진행바 · 라이트박스 · 폼
+├── js/anim.js          ← 애니메이션 (GSAP, 자체호스팅 js/gsap.min.js · ScrollTrigger.min.js)
 └── images/             ← 사진 넣는 곳 (사진-넣는-법.md 참고)
 ```
 
@@ -40,7 +40,7 @@ site/
 
 | 효과 | 위치 | 구현 |
 |---|---|---|
-| 첫 화면 스크롤 연출 | 제목이 흐려지며 사라지고 → 카피가 초점 잡히듯 등장 → 지표·카운트다운 상승 | `anim.js scrollHero()` (※ v6에서 `clamp` 미정의 버그 수정 — 이전엔 첫 화면 스크럽이 아예 안 돌았음) |
+| 첫 화면 스크롤 연출 | 제목이 흐려지며 사라지고 → 카피가 초점 잡히듯 등장 → 지표 상승 | `anim.js scrollHero()` (※ v6에서 `clamp` 미정의 버그 수정 — 이전엔 첫 화면 스크럽이 아예 안 돌았음) |
 | 은은히 움직이는 그라데이션 | 첫 화면 배경 위 오로라 | CSS `@keyframes auroraDrift` (`.shero__pin::before/::after`) |
 | 콘텐츠 페이드인 | 스크롤 시 아래에서 위로 + 살짝 흐림→또렷 | `anim.js fadeIn()` + `[data-reveal]` |
 | 패럴랙스 | 첫 화면·사진 띠·CTA 배경, 섹션 대형 번호 | `anim.js parallax()` |
@@ -88,15 +88,14 @@ CDN 의존이 없어 오프라인·사내망에서도 동작합니다.
 
 | 원본 | 구현 | 코드 |
 |---|---|---|
-| 히어로 timeline | 배경 페이드 → 헤더 하강 → 배지 → 제목 글자 → 카피 → 지표 → 카운트다운 | `heroIntro()` |
-| Splide 슬라이더 | 조감도↔투시도 켄번즈 교차 전환 + 액자 인셋 + 인디케이터 | `heroSlider()` / CSS `@keyframes kenburns` |
+| 히어로 스크롤 스크럽 | 배지 → 제목 → 카피 → 지표 순으로 스크롤 진행률에 연동해 흐려지고/또렷해짐, 배경 2장(조감도→투시도) 크로스페이드 | `scrollHero()` |
 | clipPath 리빌 | 이미지가 아래→위로 닦이며 등장 + 줌아웃 | `mediaWipe()` (`.media[data-wipe]`) |
 | textContent snap | 숫자 카운트업 | `countUp()` (`data-count`) |
 | scrub 패럴랙스 | 히어로·CTA 배경, `data-parallax` 요소가 스크롤에 따라 이동 | `parallax()` |
 | simpleFadeIn / staggerFadeIn | `[data-reveal]` 블록 순차 페이드업 | `fadeIn()` |
 
 **속도 조정**: `js/anim.js` 의 `buildFX()` 안 각 기법의 `dur`·`stagger` 기본값,
-`heroSlider()` 의 `INTERVAL`(전환 간격 6.5초), CSS `@keyframes kenburns` 의 `12s`(확대 지속).
+`scrollHero()` 안 각 요소의 페이드 구간(0~1 스크롤 진행률 기준).
 
 **안전장치**: GSAP 로드 실패 시 IntersectionObserver 폴백으로 가볍게 페이드,
 JS 완전 비활성 시 3.5초 뒤 전체 노출, OS '동작 줄이기' 설정 시 애니메이션 없이 즉시 표시.
@@ -121,7 +120,7 @@ OS에 '동작 줄이기(prefers-reduced-motion)'가 켜진 사용자는 애니�
 PowerShell에서 서버로 띄우려면:
 
 ```powershell
-cd "C:\Users\hh\Documents\부동산\(26.03.31) 북전주광신프로그레스 공동주택 상담사 교육자료\site"
+cd "C:\Users\hh\Desktop\Bukjeonju_Gwangshin_Progress"
 python -m http.server 5500
 # 브라우저에서 http://localhost:5500
 ```
@@ -137,13 +136,12 @@ python -m http.server 5500
 
 ### 0. 첫 화면 이미지 — ✅ 완료
 
-첫 화면 배경은 **조감도(`hero-01.jpg`) ↔ 투시도(`hero-02.jpg`) 2장이 켄번즈 효과로
-6.5초마다 교차 전환**되는 슬라이드입니다. 우측 상단에는 반대편 이미지가 액자로 걸리고,
-그 아래 인디케이터(●●)로 수동 전환도 됩니다.
+첫 화면은 **스크롤에 고정(sticky)된 채 조감도(`hero-01.jpg`) → 투시도(`hero-02.jpg`)가
+스크롤 진행률에 따라 서서히 크로스페이드**되는 스크럽 연출입니다(`.shero`, `scrollHero()`).
+같은 스크롤 구간에서 배지 → 제목 → 카피 → 지표가 순서대로 흐려지며 전환됩니다.
 
-폴더에 있던 스크린샷 2장을 색보정·크롭해서 넣었습니다(`images/_이미지-넣는-곳.md` 참고).
-스크린샷 기반이라 원본 고해상도 파일이 있으면 같은 이름으로 덮어쓰는 것을 권장합니다.
-`og-image.jpg`(카톡 공유 썸네일)도 조감도에서 자동 생성했습니다.
+두 이미지 모두 실제 광고자료(투시도·조감도 원본)에서 추출한 이미지로 교체 완료했습니다.
+`og-image.jpg`(카톡 공유 썸네일)도 조감도 기반입니다.
 
 | 위치 | 현재 값 | 상태 |
 |---|---|---|
@@ -167,14 +165,11 @@ JSON-LD 안의 `url` / `@id` / `image`, `robots.txt` 의 Sitemap, `sitemap.xml` 
 
 ### 3. 청약 일정
 
-```html
-<!-- index.html 히어로 영역 -->
-<div class="countdown" id="countdown" data-deadline="2026-10-16T10:00:00+09:00" ...>
-```
-`data-deadline` 을 실제 **청약 접수 시작 일시**로 바꾸세요.
-날짜가 지났거나 값을 비우면 카운트다운 대신 “일정 확정 시 공지 예정” 문구가 자동으로 표시됩니다.
+> 히어로 상단의 "청약 접수 시작까지" 카운트다운은 사용자 요청으로 **제거**했습니다
+> (2026-09-22). 세대수 등 핵심 지표(`.shero__facts`)만 남아 있습니다.
 
-`#sales` 섹션의 타임라인 5단계 날짜(`00.00`)와 공급금액 표도 공고 확정 후 채워 넣으세요.
+`#sales` 섹션의 타임라인 5단계 날짜(`00.00`, `.todo` 형광펜 표시)와 공급금액 표는
+공고 확정 후 실제 값으로 채워 넣으세요.
 
 ### 4. 법정 고지 (필수)
 
@@ -185,9 +180,12 @@ JSON-LD 안의 `url` / `@id` / `image`, `robots.txt` 의 Sitemap, `sitemap.xml` 
 ### 5. 이미지
 
 `images/사진-넣는-법.md` 를 참고하세요. 사진은 **`js/photos.js`** 목록으로 관리됩니다.
-현재 임시 이미지로 채워진 자리: `exterior-01` · `community-01/02` · `location-map` ·
-`plan-84a/b` · `favicon.png` · `apple-touch-icon.png` → 실제/AI 사진으로 덮어쓰기 필요.
-AI 포토리얼 이미지 생성은 Gemini API 키 확보 후 진행 예정.
+`hero-01/02` · `exterior-01/02` · `community-01` · `location-map` · `mapbox` ·
+`plan-84a/b` · `site-plan` · `interior-living/bedroom` 은 광고자료 실제 이미지로 채워져 있고,
+전체 최적화(리사이즈·재압축)를 거쳐 `images/` 폴더가 약 3.4MB입니다.
+아직 임시(가제) 이미지인 자리: `community-02`(조경·놀이터) — 시행사 원본이나 실사진으로
+교체를 권장합니다. `favicon.png` / `apple-touch-icon.png` 는 브랜드 심볼("光")로 제작되어
+있으며, 정식 로고가 나오면 같은 파일명으로 덮어쓰세요.
 
 ---
 
@@ -232,6 +230,7 @@ AI 포토리얼 이미지 생성은 Gemini API 키 확보 후 진행 예정.
 - [x] robots.txt · sitemap.xml (이미지 사이트맵 포함)
 - [x] 모바일 우선 반응형 + 하단 고정 CTA 바
 - [x] 라이브러리 0개, 이미지 `loading="lazy"`, 폰트 `preconnect`
+- [x] 이미지 전체 리사이즈·재압축 완료 (`images/` 약 3.4MB, 장당 대부분 400KB 이하)
 - [x] 시맨틱 마크업 (h1 1개 · section별 h2) + 모든 이미지 `alt`
 
 직접 하셔야 하는 것:
@@ -241,7 +240,6 @@ AI 포토리얼 이미지 생성은 Gemini API 키 확보 후 진행 예정.
 - [ ] **네이버 플레이스**에 분양홍보관을 업체로 등록 ← *지역 검색 유입의 가장 큰 통로*
 - [ ] **카카오맵**에 장소 등록 (`geo.position` 좌표와 일치시킬 것)
 - [ ] 네이버 블로그·카페 포스팅에서 홈페이지로 링크 (지역 부동산 검색은 네이버 비중이 절대적)
-- [ ] 이미지 압축 (장당 400KB 이하) — 로딩 속도가 순위에 직접 반영됩니다
 
 > ⚠️ **키워드 한 가지 확인 필요**
 > 요청 주신 키워드 중 **"평화동"** 은 전주시 *완산구*이고, 본 사업지는 *덕진구 고랑동*입니다.

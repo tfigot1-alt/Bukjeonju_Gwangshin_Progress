@@ -155,47 +155,6 @@
      ------------------------------------------------------------------ */
 
   /* ------------------------------------------------------------------
-     5) 청약 카운트다운
-        HTML의 data-deadline 값을 실제 청약 접수일로 바꾸세요.
-        예) data-deadline="2026-11-04T09:00:00+09:00"
-        날짜가 지났거나 값이 없으면 data-fallback 문구가 표시됩니다.
-     ------------------------------------------------------------------ */
-  var cd = $('#countdown');
-  if (cd) {
-    var raw = cd.getAttribute('data-deadline');
-    var target = raw ? new Date(raw).getTime() : NaN;
-    var label = cd.previousElementSibling;
-
-    function fallback() {
-      cd.innerHTML = '<span style="font-family:var(--ff-display);font-size:clamp(1.4rem,2.6vw,2.2rem);' +
-                     'font-weight:300;letter-spacing:-.02em">' +
-                     (cd.getAttribute('data-fallback') || '일정 확정 시 공지 예정') + '</span>';
-      if (label && label.classList.contains('countdown__label')) label.textContent = '청약 일정';
-    }
-
-    if (isNaN(target)) {
-      fallback();
-    } else {
-      var els = {
-        d: cd.querySelector('[data-cd="d"]'), h: cd.querySelector('[data-cd="h"]'),
-        m: cd.querySelector('[data-cd="m"]'), s: cd.querySelector('[data-cd="s"]')
-      };
-      var pad = function (n) { return String(n).padStart(2, '0'); };
-      var tick = function () {
-        var diff = target - Date.now();
-        if (diff <= 0) { clearInterval(timer); fallback(); return; }
-        var sec = Math.floor(diff / 1000);
-        els.d.textContent = pad(Math.floor(sec / 86400));
-        els.h.textContent = pad(Math.floor(sec % 86400 / 3600));
-        els.m.textContent = pad(Math.floor(sec % 3600 / 60));
-        els.s.textContent = pad(sec % 60);
-      };
-      var timer = setInterval(tick, 1000);
-      tick();
-    }
-  }
-
-  /* ------------------------------------------------------------------
      6) 평면도 탭
      ------------------------------------------------------------------ */
   var tabs = $$('.tab[role="tab"]');
@@ -209,6 +168,13 @@
       panel.hidden = !on;
       if (on) shown = panel;
     });
+    // hidden 상태에서는 브라우저가 loading="lazy" 이미지를 로드하지 않으므로
+    // 패널이 보이는 순간 강제로 즉시 로드시킨다 (84B 평면도 등 탭 전환 시 빈 이미지 방지).
+    if (shown) {
+      $$('img[loading="lazy"]', shown).forEach(function (img) {
+        if (!img.complete || !img.naturalWidth) img.loading = 'eager';
+      });
+    }
     // 패널 전환 시 부드럽게 나타나기 (GSAP 있을 때만)
     if (shown && window.gsap) {
       window.gsap.fromTo(shown,
