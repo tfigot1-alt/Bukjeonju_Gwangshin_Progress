@@ -57,11 +57,8 @@ window.PHOTOS = {
     alt:  "북전주 광신프로그레스 입지 안내도 — 전주IC · 국가산업단지 · 학군 · 공원",
     note: "입지 안내도(위치도) · 가로 2000px 이상 · 고화질 원본 있으면 교체 권장",
   },
-  // 오시는 길 — 사용자가 전달한 지도 캡처. 지금은 js/mapbox-image.js 의
-  // window.MAPBOX_IMG(데이터 URI)를 임시로 사용 중 — images/mapbox.jpg 파일을
-  // 직접 넣을 수 있게 되면 아래 file 값을 "images/mapbox.jpg" 로 바꾸세요.
   mapbox: {
-    file: (typeof window !== "undefined" && window.MAPBOX_IMG) || "images/mapbox.jpg",
+    file: "images/mapbox.jpg",   // 사용자가 전달한 지도 캡처 원본 (920x900)
     alt:  "분양홍보관 위치 지도 — 전주시 덕진구 호성동 2가 631-103",
     note: "오시는 길 지도 캡처",
   },
