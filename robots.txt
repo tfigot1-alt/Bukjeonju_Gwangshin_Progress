@@ -9,4 +9,4 @@ Allow: /
 User-agent: Daum
 Allow: /
 
-Sitemap: https://www.example.com/sitemap.xml
+Sitemap: https://bukjeonju-progress.kr/sitemap.xml
