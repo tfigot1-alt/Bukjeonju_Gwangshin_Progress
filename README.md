@@ -157,11 +157,9 @@ python -m http.server 5500
 
 ### 2. 도메인 (SEO 핵심)
 
-`index.html`, `robots.txt`, `sitemap.xml` 안의 **`https://www.example.com`** 을
-실제 도메인으로 전부 바꿔야 합니다. 이 값이 틀리면 **카톡 공유 썸네일이 안 뜹니다.**
-
-바뀌는 곳: `<link rel="canonical">`, `og:url`, `og:image`, `twitter:image`,
-JSON-LD 안의 `url` / `@id` / `image`, `robots.txt` 의 Sitemap, `sitemap.xml` 의 `<loc>`.
+대표 도메인 `https://bukjeonju-progress.kr/`을 `<link rel="canonical">`,
+`og:url`, `og:image`, `twitter:image`, JSON-LD, `robots.txt`, `sitemap.xml`에
+동일하게 반영했습니다. 도메인을 다시 변경할 때는 이 항목들을 함께 수정해야 합니다.
 
 ### 3. 법정 고지 (필수)
 
@@ -222,8 +220,8 @@ JSON-LD 안의 `url` / `@id` / `image`, `robots.txt` 의 Sitemap, `sitemap.xml` 
 
 직접 하셔야 하는 것:
 
-- [ ] **네이버 서치어드바이저** 사이트 등록 + 사이트맵 제출 → `naver-site-verification` 값 입력
-- [ ] **구글 서치콘솔** 등록 → `google-site-verification` 값 입력
+- [ ] **네이버 서치어드바이저**에 `https://bukjeonju-progress.kr` 등록 후 소유확인 파일 확인 + `sitemap.xml` 제출
+- [ ] **구글 서치콘솔**에 도메인 등록 후 DNS 또는 HTML 태그로 소유권 확인 + `sitemap.xml` 제출
 - [ ] **네이버 플레이스**에 분양홍보관을 업체로 등록 ← *지역 검색 유입의 가장 큰 통로*
 - [ ] **카카오맵**에 장소 등록 (`geo.position` 좌표와 일치시킬 것)
 - [ ] 네이버 블로그·카페 포스팅에서 홈페이지로 링크 (지역 부동산 검색은 네이버 비중이 절대적)

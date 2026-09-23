@@ -406,6 +406,11 @@ h3.display { font-size: var(--fs-h3); line-height: 1.25; }
   letter-spacing: var(--ls-tight); max-width: 16ch;
   will-change: transform, filter, opacity;
 }
+.shero__project {
+  display: block; margin-bottom: clamp(10px,1.4vw,18px);
+  font-family: var(--ff-sans); font-size: clamp(.75rem,1.15vw,1rem); font-weight: 700;
+  line-height: 1.2; letter-spacing: .18em; color: var(--brand);
+}
 .shero__title strong { font-weight: 400; }
 
 /* .wrap 이 max-width/여백/가운데정렬을 담당 → left/right 은 0 으로 두고
