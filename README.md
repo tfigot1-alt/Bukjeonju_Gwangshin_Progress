@@ -212,7 +212,7 @@ JSON-LD 안의 `url` / `@id` / `image`, `robots.txt` 의 Sitemap, `sitemap.xml` 
 
 - [x] 타이틀·메타디스크립션에 `북전주 광신프로그레스`, `전주 고랑동 아파트 분양`, `덕진구 아파트` 등 실검색 키워드 조합
 - [x] 오픈그래프(OG) + 트위터 카드 → 카톡·문자 공유 시 썸네일
-- [x] JSON-LD 구조화 데이터 (ApartmentComplex / RealEstateAgent / FAQPage / Organization)
+- [x] JSON-LD 구조화 데이터 (ApartmentComplex / RealEstateAgent / Organization)
 - [x] `geo.*` 메타 (지역 검색 대응)
 - [x] robots.txt · sitemap.xml (이미지 사이트맵 포함)
 - [x] 모바일 우선 반응형 + 하단 고정 CTA 바
